@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
+
+    <title>Algolia Vue-InstanSearch</title>
+
+    <style>
+      body {
+        padding-top: 20px;
+      }
+      .ais-Pagination-list {
+          display: flex;
+          list-style: none;
+      }
+
+      .ais-Pagination-item {
+          border: 1px solid darkcyan;
+          width: 30px;
+          text-align: center;
+          border-radius: 2px
+      }
+
+      .ais-RefinementList-list {
+        display: flex;
+        flex-wrap: wrap;
+        list-style: none;
+      }
+
+      .ais-RefinementList-item{
+        margin-right: 15px;
+      }
+
+      .nav-item {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="app">
+      <div class="row flex-row">
+        <div class="col-4">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="basic-addon3">Query search</span>
+            </div>
+            <input type="text" class="form-control" v-model="query">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a :class="['nav-link', {active: activeTab == 1}]" @click="activeTab = 1">Female</a>
+            </li>
+            <li class="nav-item">
+              <a :class="['nav-link', {active: activeTab == 2}]" @click="activeTab = 2">Male</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <div :class="['tab-pane fade pt-2', {show: activeTab == 1, active: activeTab == 1}]" id="home" role="tabpanel" aria-labelledby="home-tab">
+              <ais-instant-search
+                index-name="people_1"
+                :search-client="searchClient"
+              >
+              <ais-configure 
+                :query="query"
+              />
+              <div class="row">
+                <div class="col-6">
+                    <ais-refinement-list attribute="location.city"/>
+                </div>
+                <div class="col-6">
+                  <ais-refinement-list attribute="location.country"/>
+                </div>
+              </div>
+              <div class="container pt-2">
+                  <ais-hits>
+                    <ul slot-scope="{ items }" class="list-unstyled">
+                      <li v-for="item in items" :key="item.objectID" class="media">
+                        <img class="mr-3" :src="item.picture.medium" :alt="`${item.name.first} ${item.name.last}`">
+                        <div class="media-body">
+                          <h5 class="mt-0 mb-1">{{item.name.first}} {{item.name.last}}</h5>
+                          <span>{{item.email}}</span>
+                          <p>{{`${item.location.street.name}, ${item.location.street.number} - ${item.location.city} - ${item.location.state}`}}</p>
+                        </div>
+                      </li>
+                    </ul>
+                  </ais-hits>
+                  <ais-state-results>
+                    <p slot-scope="{ query, hits }">
+                      <span v-if="!hits.length"> No results found for the query: <q>{{ query }}</q></span>
+                    </p>
+                  </ais-state-results>
+                  <ais-pagination></ais-pagination>
+              </div>
+              </ais-instant-search>
+            </div>
+            <div :class="['tab-pane fade pt-2', {show: activeTab == 2, active: activeTab == 2}]" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <ais-instant-search
+                index-name="people_2"
+                :search-client="searchClient"
+              >
+              <ais-configure 
+                :query="query"
+              />
+              <div class="row">
+                <div class="col-6">
+                    <ais-refinement-list attribute="location.city"/>
+                </div>
+                <div class="col-6">
+                  <ais-refinement-list attribute="location.country"/>
+                </div>
+              </div>
+              <div class="container pt-2">
+                  <ais-hits>
+                    <ul slot-scope="{ items }" class="list-unstyled">
+                      <li v-for="item in items" :key="item.objectID" class="media">
+                        <img class="mr-3" :src="item.picture.medium" :alt="`${item.name.first} ${item.name.last}`">
+                        <div class="media-body">
+                          <h5 class="mt-0 mb-1">{{item.name.first}} {{item.name.last}}</h5>
+                          <span>{{item.email}}</span>
+                          <p>{{`${item.location.street.name}, ${item.location.street.number} - ${item.location.city} - ${item.location.state}`}}</p>
+                        </div>
+                      </li>
+                    </ul>
+                  </ais-hits>
+                  <ais-state-results>
+                    <p slot-scope="{ query, hits }">
+                      <span v-if="!hits.length"> No results found for the query: <q>{{ query }}</q></span>
+                    </p>
+                  </ais-state-results>
+                  <ais-pagination></ais-pagination>
+              </div>
+              </ais-instant-search>
+            </div>
+          </div>
+        </div>
+      </div>
+		</div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		
+
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue-instantsearch@2.4.0/dist/vue-instantsearch.js"></script>
+		<script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+
+		<script src="src/main.js"></script>
+  </body>
+</html>
